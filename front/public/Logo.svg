@@ -1,0 +1,38 @@
+<svg width="250" height="70" viewBox="0 0 250 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <!-- 主图标渐变：从深邃的科技蓝到充满活力的电光青，带有一丝未来感 -->
+        <linearGradient id="dynamicStarGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#1A237E; stop-opacity:1" /> <!-- 深蓝，沉稳的基调 -->
+            <stop offset="30%" style="stop-color:#3F51B5; stop-opacity:1" /> <!-- 普鲁士蓝，过渡 -->
+            <stop offset="60%" style="stop-color:#2196F3; stop-opacity:1" /> <!-- 亮蓝，活力 -->
+            <stop offset="100%" style="stop-color:#00BCD4; stop-opacity:1" /> <!-- 电光青，锐利感 -->
+        </linearGradient>
+
+        <!-- 文字渐变：保持与图标的科技感协调，选用略深的青绿色渐变 -->
+        <linearGradient id="textGradientCool" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#4DB6AC;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#00796B;stop-opacity:1" />
+        </linearGradient>
+
+        <!-- 内部高光/速度线渐变：用于增强动感和立体感 -->
+        <linearGradient id="highlightGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#FFEB3B; stop-opacity:1" /> <!-- 亮黄，冲击力 -->
+            <stop offset="100%" style="stop-color:#FF9800; stop-opacity:1" /> <!-- 活力橙，速度感 -->
+        </linearGradient>
+    </defs>
+
+    <!-- Logo 图标部分 - 抽象的锐利星体/动态齿轮 -->
+    <g transform="translate(15, 5)">
+        <!-- 基础的尖锐星形或齿轮外廓，使用主图标渐变 -->
+        <path d="M25 0 L34 15 L50 15 L36 28 L40 45 L25 35 L10 45 L14 28 L0 15 L16 15 Z" fill="url(#dynamicStarGradient)"/>
+        
+        <!-- 内部的锐角线条或切割面，模拟光影和速度感，使用高光渐变 -->
+        <path d="M25 5 L30 17 L44 17 L33 26 L36 38 L25 33 L14 38 L17 26 L6 17 L20 17 Z" fill="url(#highlightGradient)" opacity="0.8"/>
+
+        <!-- 额外添加中心点或小型核心，增加聚焦感和精密感 -->
+        <circle cx="25" cy="23" r="4" fill="white" opacity="0.9"/>
+    </g>
+
+    <!-- 文本部分 - “游星集市”文字，采用更现代的字体风格和渐变色，并增加倾斜效果 -->
+    <text x="75" y="45" font-family="Noto Sans SC, sans-serif" font-size="36" font-weight="800" fill="url(#textGradientCool)" transform="skewX(-8)">游星集市</text>
+</svg>
