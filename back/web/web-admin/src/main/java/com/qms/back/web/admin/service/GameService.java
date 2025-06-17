@@ -3,6 +3,7 @@ package com.qms.back.web.admin.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.qms.back.model.entity.Game;
 import com.qms.back.model.dto.GameDetailDTO;
+import java.util.List;
 
 public interface GameService extends IService<Game> {
     
@@ -12,4 +13,10 @@ public interface GameService extends IService<Game> {
      * @return 游戏详情DTO
      */
     GameDetailDTO getGameDetail(Long gameId);
+
+    /**
+     * 获取预发售游戏列表
+     * @return 预发售游戏列表
+     */
+    List<Game> getUpcomingGames();
 } 

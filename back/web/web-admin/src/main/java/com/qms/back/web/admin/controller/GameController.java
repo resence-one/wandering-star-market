@@ -87,6 +87,12 @@ public class GameController {
         return Result.ok(result);
     }
 
+    @GetMapping("/upcoming")
+    public Result<java.util.List<Game>> upcoming() {
+        java.util.List<Game> upcomingGames = gameService.getUpcomingGames();
+        return Result.ok(upcomingGames);
+    }
+
     @GetMapping("/{id}")
     public Result<Game> getById(@PathVariable Long id) {
         Game game = gameMapper.selectById(id);
