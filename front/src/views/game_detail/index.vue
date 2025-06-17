@@ -7,7 +7,7 @@
           <h1>{{ game.name }}</h1>
           <p class="game-price">￥{{ Number(game.price).toFixed(2) }}</p>
           <div class="purchase-actions">
-            <el-button type="primary" size="large">立即购买</el-button>
+            <el-button type="primary" size="large" :disabled="isUpcoming" :class="{ 'is-disabled-purchase': isUpcoming }">立即购买</el-button>
             <el-button size="large">加入购物车</el-button>
             <el-button size="large">加入心愿单</el-button>
           </div>
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { getGameDetail, getGameCategories } from '@/api/game'; // 假设你有一个API来获取游戏详情
 
@@ -52,6 +52,11 @@ export default {
     const loading = ref(true);
     const activeTab = ref('overview');
     const categories = ref([]);
+
+    // 计算属性：判断游戏是否为预发售状态
+    const isUpcoming = computed(() => {
+      return game.value && game.value.status === 2;
+    });
 
     const loadGameDetail = async (id) => {
       loading.value = true;
@@ -130,7 +135,8 @@ export default {
       formatDate,
       formatStatus,
       getCategoryName,
-      formatDescription
+      formatDescription,
+      isUpcoming
     };
   }
 };
@@ -186,6 +192,14 @@ export default {
             padding: 12px 25px;
             font-size: 16px;
             border-radius: 6px;
+          }
+
+          .is-disabled-purchase {
+            background-color: #606266 !important; /* 灰色背景 */
+            border-color: #606266 !important; /* 灰色边框 */
+            color: #a0a0a0 !important; /* 灰色文字 */
+            cursor: not-allowed !important; /* 禁用光标 */
+            opacity: 0.8; /* 降低不透明度 */
           }
         }
 

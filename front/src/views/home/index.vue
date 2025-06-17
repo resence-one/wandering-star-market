@@ -33,10 +33,11 @@
     <div class="section featured-games">
       <div class="section-header">
         <h2>推荐游戏</h2>
-        <el-button type="text" class="more-btn">查看更多 ></el-button>
+        <el-button type="text" class="more-btn" @click="goToMore('featured')" v-if="featuredGames.total >= 6">查看更多 ></el-button>
       </div>
+      <div v-if="featuredGames.records && featuredGames.records.length === 0" style="color: gray; text-align: center; padding: 20px;">目前没有推荐游戏</div>
       <div class="game-grid">
-        <div v-for="game in featuredGames" :key="game.id" class="game-card" @click="goToGameDetail(game.id)">
+        <div v-for="game in featuredGames.records.slice(0, 6)" :key="game.id" class="game-card" @click="goToGameDetail(game.id)">
           <div class="game-cover">
             <img :src="game.coverImage || 'https://via.placeholder.com/200x266?text=No+Image'" :alt="game.name">
             <div v-if="game.discount" class="discount-tag">-{{ game.discount }}%</div>
@@ -54,10 +55,10 @@
     <div class="section upcoming-games">
       <div class="section-header">
         <h2>即将发售</h2>
-        <el-button type="text" class="more-btn">查看更多 ></el-button>
+        <el-button type="text" class="more-btn" @click="goToMore('upcoming')" v-if="upcomingGames.length >= 6">查看更多 ></el-button>
       </div>
       <div class="game-grid">
-        <div v-for="game in upcomingGames" :key="game.id" class="game-card" @click="goToGameDetail(game.id)">
+        <div v-for="game in upcomingGames.slice(0, 6)" :key="game.id" class="game-card" @click="goToGameDetail(game.id)">
           <div class="game-cover">
             <img :src="game.coverImage || 'https://via.placeholder.com/200x266?text=No+Image'" :alt="game.name">
             <div class="release-date-tag">{{ formatDate(game.releaseDate) }} 发售</div>
@@ -74,10 +75,10 @@
     <div class="section promotion-games">
       <div class="section-header">
         <h2>限时促销</h2>
-        <el-button type="text" class="more-btn">查看更多 ></el-button>
+        <el-button type="text" class="more-btn" @click="goToMore('promotion')" v-if="promotionGames.total >= 6">查看更多 ></el-button>
       </div>
       <div class="game-grid">
-        <div v-for="game in promotionGames" :key="game.id" class="game-card" @click="goToGameDetail(game.id)">
+        <div v-for="game in promotionGames.records.slice(0, 6)" :key="game.id" class="game-card" @click="goToGameDetail(game.id)">
           <div class="game-cover">
             <img :src="game.coverImage || 'https://via.placeholder.com/200x266?text=No+Image'" :alt="game.name">
             <div class="discount-tag">-{{ game.discount }}%</div>
@@ -95,10 +96,10 @@
     <div class="section hot-games">
       <div class="section-header">
         <h2>热门神作</h2>
-        <el-button type="text" class="more-btn">查看更多 ></el-button>
+        <el-button type="text" class="more-btn" @click="goToMore('hot')" v-if="hotGames.total >= 6">查看更多 ></el-button>
       </div>
       <div class="game-grid">
-        <div v-for="game in hotGames" :key="game.id" class="game-card" @click="goToGameDetail(game.id)">
+        <div v-for="game in hotGames.records.slice(0, 6)" :key="game.id" class="game-card" @click="goToGameDetail(game.id)">
           <div class="game-cover">
             <img :src="game.coverImage || 'https://via.placeholder.com/200x266?text=No+Image'" :alt="game.name">
           </div>
@@ -115,7 +116,7 @@
 <script>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { getGameList, getFeaturedGames, getGameCategories } from '@/api/game'
+import { getGameList, getFeaturedGames, getGameCategories, getUpcomingGames } from '@/api/game'
 
 export default {
   name: 'HomePage',
@@ -126,10 +127,10 @@ export default {
       { id: 1, title: '育碧佳作 限时闪促！', description: '精选游戏低至1折起', imageUrl: 'https://cdn.sonkwo.cn/cms/assets/cms_banner_v2_f8e81119.jpg' },
       { id: 2, title: '史低游戏', description: '超多史低游戏等你来！', imageUrl: 'https://cdn.sonkwo.cn/cms/assets/cms_banner_v2_f8e81119.jpg' }
     ])
-    const featuredGames = ref([])
+    const featuredGames = ref({ records: [], total: 0 })
     const upcomingGames = ref([])
-    const promotionGames = ref([])
-    const hotGames = ref([])
+    const promotionGames = ref({ records: [], total: 0 })
+    const hotGames = ref({ records: [], total: 0 })
 
     const loadCategories = async () => {
       try {
@@ -144,28 +145,20 @@ export default {
 
     const loadFeaturedGames = async () => {
       try {
-        const res = await getFeaturedGames({ page: 1, size: 4 })
-        if (res.code === 200) {
-          featuredGames.value = res.records
-        }
+        const res = await getFeaturedGames({ page: 1, size: 6 })
+        featuredGames.value.records = res.records
+        featuredGames.value.total = res.total
       } catch (error) {
-        console.error('获取推荐游戏失败:', error)
+        console.error('获取推荐游戏失败: 捕获到错误', error)
       }
     }
 
     const loadUpcomingGames = async () => {
       try {
-        const res = await getGameList({
-          page: 1,
-          size: 4,
-          sortBy: 'releaseDate',
-          sortOrder: 'asc'
-        })
-        if (res.code === 200) {
-          upcomingGames.value = res.records
-        }
+        const res = await getUpcomingGames()
+        upcomingGames.value = res
       } catch (error) {
-        console.error('获取即将发售游戏失败:', error)
+        console.error('获取即将发售游戏失败: 捕获到错误', error)
       }
     }
 
@@ -173,18 +166,18 @@ export default {
       try {
         const res = await getGameList({
           page: 1,
-          size: 4,
+          size: 6,
           sortBy: 'price',
           sortOrder: 'asc'
         })
         if (res.code === 200) {
-          // 模拟一些有折扣的促销游戏，实际应由后端返回
-          promotionGames.value = res.records.map(game => ({
+          promotionGames.value.records = res.records.map(game => ({
             ...game,
-            discount: Math.floor(Math.random() * (70 - 10 + 1)) + 10, // 10-70% 随机折扣
-            originalPrice: game.price, // 原始价格
-            price: Number(((game.price != null ? Number(game.price) : 0) * (1 - (Math.floor(Math.random() * (70 - 10 + 1)) + 10) / 100)).toFixed(2)) // 折扣后价格
+            discount: Math.floor(Math.random() * (70 - 10 + 1)) + 10,
+            originalPrice: game.price,
+            price: Number(((game.price != null ? Number(game.price) : 0) * (1 - (Math.floor(Math.random() * (70 - 10 + 1)) + 10) / 100)).toFixed(2))
           }))
+          promotionGames.value.total = res.total
         }
       } catch (error) {
         console.error('获取促销游戏失败:', error)
@@ -195,12 +188,13 @@ export default {
       try {
         const res = await getGameList({
           page: 1,
-          size: 8,
+          size: 6,
           sortBy: 'createdAt',
           sortOrder: 'desc' 
         })
         if (res.code === 200) {
-          hotGames.value = res.records
+          hotGames.value.records = res.records
+          hotGames.value.total = res.total
         }
       } catch (error) {
         console.error('获取热门游戏失败:', error)
@@ -231,7 +225,7 @@ export default {
 
     const formatDate = (dateString) => {
       const options = { year: 'numeric', month: 'long', day: 'numeric' }
-      if (!dateString) return '待定' // 处理空日期
+      if (!dateString) return '待定'
       try {
         return new Date(dateString).toLocaleDateString('zh-CN', options)
       } catch (e) {
@@ -239,6 +233,20 @@ export default {
         return '格式错误'
       }
     }
+
+    const goToMore = (type) => {
+      let query = {};
+      if (type === 'featured') {
+        query = { isFeatured: true };
+      } else if (type === 'upcoming') {
+        query = { status: 2 };
+      } else if (type === 'promotion') {
+        query = { sortBy: 'price', sortOrder: 'asc', hasDiscount: true };
+      } else if (type === 'hot') {
+        query = { sortBy: 'createdAt', sortOrder: 'desc' };
+      }
+      router.push({ path: '/games', query });
+    };
 
     onMounted(() => {
       loadData()
@@ -253,7 +261,8 @@ export default {
       hotGames,
       goToGameDetail,
       goToCategory,
-      formatDate
+      formatDate,
+      goToMore
     }
   }
 }
@@ -264,7 +273,7 @@ export default {
   background-color: #1a1a1a;
   color: #e0e0e0;
   padding: 20px 0;
-  min-height: calc(100vh - 60px - 200px); // 减去header和footer高度，保持main区域最小高度
+  min-height: calc(100vh - 60px - 200px);
   max-width: 1400px;
   margin: 0 auto;
 
@@ -359,7 +368,7 @@ export default {
 
   .section {
     margin-bottom: 50px;
-    padding: 0 20px; // 与分类导航对齐
+    padding: 0 20px;
 
     .section-header {
       display: flex;
@@ -405,7 +414,7 @@ export default {
         .game-cover {
           position: relative;
           width: 100%;
-          padding-top: 133%; // 200/266 比例
+          padding-top: 133%;
           overflow: hidden;
 
           img {

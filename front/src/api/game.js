@@ -51,12 +51,11 @@ export function getHotGames(params) {
   })
 }
 
-// 获取即将发售的游戏（模拟）
-export function getUpcomingGames(params) {
+// 获取预发售游戏
+export function getUpcomingGames() {
   return request({
-    url: '/game/list',
-    method: 'get',
-    params: { ...params, sortBy: 'releaseDate', sortOrder: 'asc' }
+    url: '/game/upcoming',
+    method: 'get'
   })
 }
 
